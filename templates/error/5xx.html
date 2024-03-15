@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>404 Not Found</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"/>
+    <style>
+        .flex-container {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="flex-container" style="margin-top: 200px;">
+        <el-row>
+            <el-col :span="24">
+                <el-card>
+                    <el-card-header>
+                        <span>404</span>
+                    </el-card-header>
+                    <el-card-body>
+                        <p>Sorry, the page you visited does not exist.</p>
+                    </el-card-body>
+                </el-card>
+            </el-col>
+        </el-row>
+    </div>
+</div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<!-- import Axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            msg: 'Internal Server Error'
+        }
+    })
+</script>
+</html>

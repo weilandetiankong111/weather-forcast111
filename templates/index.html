@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Weather Forcast</title>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" />
+  <style>
+    .flex-container {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+
+    <el-row>
+      <el-image style="display: block; margin: 0 auto; width: 500px; height: 300px;" src="/static/images/logo.png" />
+    </el-row>
+
+    <el-row class="flex-container">
+      <el-cascader placeholder="选择城市" :options="options" :props="props" @expand-change="eChange" v-model="ids" filterable clearable></el-cascader>
+      <el-button type="primary" @click="getWeather" style="margin-left: 5px;">查询天气</el-button>
+    </el-row>
+    <br />
+    <el-row class="flex-container">
+      <el-card style="width: 800px; height: 300px; margin: 0 auto;">
+          <el-row>
+            <el-col :span="4">
+              <span style="font-size: 24px; font-weight: bolder;">((cityName))</span>
+            </el-col>
+            <el-col :offset='16' :span='8'>
+              ((realtimeWeather.updateTime)) 更新
+            </el-col>
+          </el-row>
+
+          <el-row class="flex-container">
+            <el-col :span="4" style="font-size: 64px;">
+              ((realtimeWeather.temperature))
+            </el-col>
+            <el-col :span="2" style="font-size: 24px;">
+              ℃
+            </el-col>
+          </el-row>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <el-row class="flex-container">
+            <el-col :span="4">
+              <el-image 
+              style="width: 24px; height: 24px; vertical-align: middle"
+              src="/static/images/pressure.svg"></el-image>
+              ((realtimeWeather.pressure))hPa
+            </el-col>
+            <el-col :span="4">
+              <el-image 
+              style="width: 24px; height: 24px; vertical-align: middle"
+              src="/static/images/humidness.svg"></el-image>
+              ((realtimeWeather.humidness))%
+            </el-col>
+            <el-col :span="4">
+              <el-image 
+              style="width: 24px; height: 24px; vertical-align: middle"
+              src="/static/images/precipitation.svg"></el-image>
+              ((realtimeWeather.precipitation))mm
+            </el-col>
+            <el-col :span="4">
+              <el-image 
+              style="width: 24px; height: 24px; vertical-align: middle"
+              src="/static/images/wind.svg"></el-image>
+              ((realtimeWeather.wind))
+            </el-col>
+          </el-row>
+
+      </el-card>
+    </el-row>
+
+
+
+  </div>
+</body>
+
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<!-- import Axios -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+  // Vue.use(ElementUI)
+  new Vue({
+    el: '#app',
+    methods: {
+      getWeather() {
+        if (!this.ids || this.ids.length < 2) {
+          this.$message('请选择城市');
+          return
+        }
+        window.open('/weather/city/' + this.ids[1], '_blank')
+      },
+      eChange(val) {
+        provinceId = val[0]
+        for (let i = 0; i < this.options.length; i++) {
+          if (this.options[i].id === provinceId) {
+            if (this.options[i].children.length > 0) {
+              return
+            }
+          }
+        }
+        //  获取市级数据
+        if (provinceId) {
+          axios.get('/api/city', {
+            params: {
+              provinceId: provinceId
+            }
+          }).then( (response) => {
+            let data = response.data
+            if (data.code === 0) {
+              // for this.options
+              
+              for (let i = 0; i < this.options.length; i++) {
+                if (this.options[i].id === provinceId) {
+                  this.options[i].children = data.data
+                  break
+                }
+              }
+            }
+          })
+        }
+      }
+    },
+    data: {
+      ids: [],
+      props: {
+        value: 'id',
+        label: 'name',
+        children: 'children',
+      },
+      options: [
+      (% for province in provinceList %)
+        {
+          id: '(( province.id ))',
+          name: '(( province.name ))',
+          children: []
+        },
+        (% endfor %)
+      ]
+        
+    }
+  })
+</script>
+
+</html>
