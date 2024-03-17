@@ -33,6 +33,6 @@ python app.py \
 --mysql.host=127.0.0.1\
 --mysql.port=3306 \
 --mysql.user=root \
---mysql.password=Admin@123 \
+--mysql.password=123456 \
 --mysql.db=weather_show
 ```
